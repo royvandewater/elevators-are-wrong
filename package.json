@@ -3,11 +3,16 @@
   "version": "1.0.0",
   "description": "They're at least not as right as they could be",
   "main": "index.js",
-  "dependencies": {},
-  "devDependencies": {
-    "coffee-script": "^1.9.2"
+  "bin": "command.js",
+  "dependencies": {
+    "async": "^0.9.0",
+    "coffee-script": "^1.9.2",
+    "commander": "^2.8.1",
+    "debug": "^2.1.3",
+    "lodash": "^3.8.0"
   },
   "scripts": {
+    "start": "node command.js",
     "test": "exit 0"
   },
   "repository": {
