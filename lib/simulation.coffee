@@ -1,12 +1,14 @@
 debug = require('debug')('elevators-are-wrong:simulation')
 _     = require 'lodash'
 
+Ticker = require './ticker'
 Building = require './building'
 Person   = require './person'
 
 class Simulation
   constructor: (options={}) ->
-    @building = new Building _.pick(options, 'numElevators', 'numFloors', 'capacity')
+    @ticker = new Ticker interval: 1000
+    @building = new Building _.extend(ticker: @ticker, _.pick(options, 'numElevators', 'numFloors', 'capacity'))
     @people    = @generatePeople options.numPeople
 
   generatePeople: (numPeople) =>
@@ -14,11 +16,17 @@ class Simulation
       new Person number: i, floorNumber: @building.getRandomFloorNumber()
 
   run: =>
-    _.each @people, @attemptToEnterElevator
+    @building.boot()
+    _.each @people, @navigateToFloor
+    console.log JSON.stringify(@building.toJSON(), null, 2)
+    @ticker.boot()
 
-  attemptToEnterElevator: (person) =>
-    @building.callElevator (elevator) =>
-      return @attemptToEnterElevator(person) if elevator.isFull()
-      elevator.insert person
+  navigateToFloor: (person) =>
+    @building.callElevatorTo 1
+
+    @building.on 'elevator.open.1', (elevator) =>
+      return if elevator.isFull()
+      @building.off 'elevator.open.1', arguments.callee
+      elevator.insert person.number
 
 module.exports = Simulation
