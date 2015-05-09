@@ -3,10 +3,15 @@ debug           = require('debug')('elevators-are-wrong:ticker')
 
 class Ticker extends EventEmitter2
   constructor: ({interval: @interval}) ->
+    @currentTick = 0
     @on 'tick', => debug 'tick'
 
   boot: =>
-    @timer = setInterval (=> @emit 'tick'), @interval
+    @timer = setInterval @tick, @interval
+
+  tick: =>
+    @emit 'tick', @currentTick
+    @currentTick += 1
 
   shutdown: =>
     clearInterval @timer

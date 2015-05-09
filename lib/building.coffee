@@ -15,6 +15,7 @@ class Building extends EventEmitter2
   boot: =>
     _.each @elevators, (elevator) =>
       elevator.on 'open.*', =>
+        debug 'emitting', "elevator.open.#{elevator.floorNumber}"
         @emit ['elevator', 'open', elevator.floorNumber], elevator
       elevator.boot()
 
@@ -24,6 +25,10 @@ class Building extends EventEmitter2
 
   getRandomFloorNumber: =>
     _.sample(@floors).number
+
+  insertPersonIntoFloorNumber: (personNumber,floorNumber) =>
+    floor = _.findWhere @floors, number: floorNumber
+    floor.insert personNumber
 
   toJSON: =>
     elevators: _.map @elevators, (elevator) => elevator.toJSON()

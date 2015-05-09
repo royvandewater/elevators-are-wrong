@@ -16,7 +16,7 @@ class Command
     capacity     = commander.capacity  ? 1
     numDays      = commander.days      ? 1
     numElevators = commander.elevators ? 1
-    numFloors    = commander.floors    ? 1
+    numFloors    = commander.floors    ? 2
     numPeople    = commander.people    ? 1
 
     simulation = new Simulation
