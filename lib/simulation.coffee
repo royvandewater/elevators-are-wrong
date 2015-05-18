@@ -7,7 +7,7 @@ Person   = require './person'
 
 class Simulation
   constructor: (options={}) ->
-    @ticker = new Ticker interval: 1000
+    @ticker = new Ticker interval: options.interval
     @building = new Building _.extend(ticker: @ticker, _.pick(options, 'numElevators', 'numFloors', 'capacity'))
     @people    = @_generatePeople options.numPeople
 
@@ -17,14 +17,15 @@ class Simulation
 
     _.each @people, @navigateToFloor
 
-    # @ticker.on 'tick', =>
-    #   debug JSON.stringify(@building.toJSON(), null, 2)
+    @ticker.on 'tick', =>
+      if _.all @people, 'arrived'
+        process.exit 0
 
   navigateToFloor: (person) =>
-    person.say "I'm headed to", person.destinationFloorNumber
+    person.say "I'm headed to #{person.destinationFloorNumber}"
 
     if person.destinationFloorNumber == 0
-      debug 'person arrived at destination', person.number
+      person.arrive()
       return @building.insertPersonIntoFloorNumber person.number, 0
 
     @building.callElevatorTo 0
@@ -33,20 +34,22 @@ class Simulation
       person.say 'hey, my elevator is here'
       if elevator.isFull() || elevator.isClosed()
         person.say 'nevermind, its full. I guess I\'ll wait for the next one'
+        @building.callElevatorTo 0
         return
 
       @building.off 'elevator.open.0', arguments.callee
       elevator.insert person.number
       elevator.pushFloorButton person.destinationFloorNumber
-      elevator.on ['open', person.destinationFloorNumber], =>
+      elevator.once ['open', person.destinationFloorNumber], =>
+        person.arrive "this is me. See y'all later"
         elevator.remove person.number
-        building.insertPersonIntoFloorNumber person.number, person.destinationFloorNumber
+        @building.insertPersonIntoFloorNumber person.number, person.destinationFloorNumber
 
   _generatePeople: (numPeople) =>
     _.times numPeople, (i) =>
       new Person({
         number: i
-        destinationFloorNumber: @building.getRandomFloorNumber()
+        destinationFloorNumber: 1 # @building.getRandomFloorNumber()
         ticker: @ticker
       })
 

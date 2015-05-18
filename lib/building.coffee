@@ -17,11 +17,14 @@ class Building extends EventEmitter2
       elevator.on 'open.*', =>
         debug 'emitting', "elevator.open.#{elevator.floorNumber}"
         @emit ['elevator', 'open', elevator.floorNumber], elevator
+      elevator.on 'close.*', =>
+        debug 'emitting', "elevator.close.#{elevator.floorNumber}"
+        @emit ['elevator', 'close', elevator.floorNumber], elevator
       elevator.boot()
 
   callElevatorTo: (floorNumber) =>
     elevator = _.first @elevators
-    elevator.gotoFloor floorNumber
+    elevator.pushFloorButton floorNumber
 
   getRandomFloorNumber: =>
     _.sample(@floors).number
