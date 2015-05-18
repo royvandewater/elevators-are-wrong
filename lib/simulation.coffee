@@ -19,6 +19,8 @@ class Simulation
 
     @ticker.on 'tick', =>
       if _.all @people, 'arrived'
+        status = success: true, ticksElapsed: @ticker.ticksElapsed()
+        console.log JSON.stringify(status, null, 2)
         process.exit 0
 
   navigateToFloor: (person) =>
@@ -49,7 +51,7 @@ class Simulation
     _.times numPeople, (i) =>
       new Person({
         number: i
-        destinationFloorNumber: 1 # @building.getRandomFloorNumber()
+        destinationFloorNumber: @building.getRandomFloorNumber()
         ticker: @ticker
       })
 

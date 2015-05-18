@@ -3,17 +3,22 @@ debug           = require('debug')('elevators-are-wrong:ticker')
 
 class Ticker extends EventEmitter2
   constructor: ({interval: @interval}) ->
+    super
+    @setMaxListeners 1000
     @currentTick = 0
     @on 'tick', => debug 'tick'
 
   boot: =>
     @timer = setInterval @tick, @interval
 
+  shutdown: =>
+    clearInterval @timer
+
   tick: =>
     @emit 'tick', @currentTick
     @currentTick += 1
 
-  shutdown: =>
-    clearInterval @timer
+  ticksElapsed: =>
+    @currentTick
 
 module.exports = Ticker

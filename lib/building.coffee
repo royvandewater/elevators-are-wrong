@@ -8,6 +8,7 @@ Floor    = require './floor'
 class Building extends EventEmitter2
   constructor: (options={}) ->
     super wildcard: true
+    @setMaxListeners 1000
     {@ticker}  = options
     @elevators = @_generateElevators options.numElevators, options.capacity
     @floors    = @_generateFloors options.numFloors
@@ -23,7 +24,7 @@ class Building extends EventEmitter2
       elevator.boot()
 
   callElevatorTo: (floorNumber) =>
-    elevator = _.first @elevators
+    elevator = _.sample @elevators
     elevator.pushFloorButton floorNumber
 
   getRandomFloorNumber: =>
