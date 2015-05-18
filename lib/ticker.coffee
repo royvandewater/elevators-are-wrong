@@ -4,7 +4,7 @@ debug           = require('debug')('elevators-are-wrong:ticker')
 class Ticker extends EventEmitter2
   constructor: ({interval: @interval}) ->
     super
-    @setMaxListeners 1000
+    @setMaxListeners 100000
     @currentTick = 0
     @on 'tick', => debug 'tick'
 

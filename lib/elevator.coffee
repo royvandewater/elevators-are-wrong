@@ -55,11 +55,10 @@ class Elevator extends EventEmitter2
     debug 'sortRequests', floorNumber: @floorNumber
     @requests = _.sortBy @requests
     [currentFloor, others] = _.partition @requests, (request) => request == @floorNumber
-    @debug others: others, currentFloor: currentFloor
     @requests = _.union others, currentFloor
 
   tick: (tickNumber) =>
-    @debug floor: @floorNumber, destination: @destinationFloorNumber, requests: @requests
+    @debug 'tick', floor: @floorNumber, destination: @destinationFloorNumber, requests: @requests
     @currentTick = tickNumber
 
     return @openDoors() if @destinationFloorNumber == @floorNumber && !@doorsAreOpen

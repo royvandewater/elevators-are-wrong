@@ -25,6 +25,7 @@ class Simulation
 
   navigateToFloor: (person) =>
     person.say "I'm headed to #{person.destinationFloorNumber}"
+    availableElevators = []
 
     if person.destinationFloorNumber == 0
       person.arrive()
@@ -33,12 +34,18 @@ class Simulation
     @building.callElevatorTo 0
 
     @building.on 'elevator.open.0', (elevator) =>
-      person.say 'hey, my elevator is here'
-      if elevator.isFull() || elevator.isClosed()
-        person.say 'nevermind, its full. I guess I\'ll wait for the next one'
+      availableElevators = _.union availableElevators, [elevator]
+
+    @ticker.on 'tick', =>
+      availableElevators = _.where availableElevators, floorNumber:0, doorsAreOpen: true
+      availableElevators = _.without availableElevators, (elevator) => elevator.isFull()
+      debug 'availableElevators', _.pluck(availableElevators, 'number')
+      if _.isEmpty availableElevators
         @building.callElevatorTo 0
         return
 
+      elevator = _.sample availableElevators
+      @ticker.off 'tick', arguments.callee
       @building.off 'elevator.open.0', arguments.callee
       elevator.insert person.number
       elevator.pushFloorButton person.destinationFloorNumber

@@ -8,7 +8,7 @@ Floor    = require './floor'
 class Building extends EventEmitter2
   constructor: (options={}) ->
     super wildcard: true
-    @setMaxListeners 1000
+    @setMaxListeners 100000
     {@ticker}  = options
     @elevators = @_generateElevators options.numElevators, options.capacity
     @floors    = @_generateFloors options.numFloors

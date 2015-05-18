@@ -10,12 +10,12 @@ class Command
       .option '-d, --days [count]', 'Number of days to simulate, default: 1'
       .option '-e, --elevators [count]', 'Number of elevators to simulate, default: 1'
       .option '-f, --floors [count]', 'Number of floors to simulate, default: 2'
-      .option '-i, --interval [ms]', 'Amount of time between ticks, default: 1000'
+      .option '-i, --interval [ms]', 'Amount of time between ticks, default: 0'
       .option '-p, --people [count]', 'Number of people to simulate, default: 1'
       .parse process.argv
 
     capacity     = commander.capacity  ? 1
-    interval     = parseInt(commander.interval ? 1000)
+    interval     = parseInt(commander.interval ? 0)
     numDays      = commander.days      ? 1
     numElevators = commander.elevators ? 1
     numFloors    = commander.floors    ? 2
